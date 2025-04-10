@@ -169,7 +169,7 @@ Blow Chat YT peut extraire et analyser les transcriptions de vidéos YouTube, cr
 
 ### Recherche sémantique
 
-L'application utilise FAISS et SentenceTransformers pour créer une base de données vectorielle, permettant de faire des recherches sémantiques avancées dans les documents et transcriptions indexés.
+L'application utilise FAISS et SentenceTransformers pour créer une base de données vectorielle, permettant de faire des recherches sémantiques avancées dans les documents que vous partagez et transcriptions indexés.
 
 ### Interface personnalisable
 
