@@ -1,0 +1,11 @@
+customtkinter
+colorama
+langchain_groq
+langchain
+sentence_transformers
+faiss-cpu
+numpy
+PyPDF2
+requests
+youtube_transcript_api
+google-api-python-client
