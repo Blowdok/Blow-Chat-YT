@@ -962,6 +962,8 @@ data = None
 
 model_options = [
     "meta-llama/llama-4-scout-17b-16e-instruct",
+    "qwen-2.5-coder-32b",
+    "deepseek-r1-distill-qwen-32b",
     # ajouter d'autres modèles ici
 ]
 model_name = ctk.StringVar(value=model_options[0])  # Modèle par défaut
@@ -1057,10 +1059,6 @@ model_label.pack(pady=5)
 
 model_dropdown = ctk.CTkOptionMenu(right_frame, values=model_options, variable=model_name)
 model_dropdown.pack(pady=5)
-
-load_image_button = ctk.CTkButton(right_frame, text="Charger une image", command=load_image)
-load_image_button.pack(pady=5)
-
 
 # Widgets pour l'onglet Assistant
 # Zone de texte pour afficher la conversation
