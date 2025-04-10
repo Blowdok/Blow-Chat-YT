@@ -13,7 +13,7 @@ Blow Chat YT est un assistant conversationnel intelligent basé sur l'IA qui vou
 - **Assistant conversationnel avancé** :
   Interagissez avec l'IA grâce à l'intégration de modèles de langage puissants via l'API Groq
 - **Analyse de vidéos YouTube** :
-  Téléchargez et analysez automatiquement les transcriptions de vidéos YouTube
+  Télécharger et analyser les transcriptions de vidéos YouTube via une base de donnée vectorielle
 - **Recherche sémantique** :
   Utilisez une base de données vectorielle (FAISS) pour rechercher efficacement dans vos documents
 - **Personnalisation complète** :
