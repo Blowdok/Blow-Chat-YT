@@ -58,7 +58,10 @@ Blow Chat YT est un assistant conversationnel intelligent basé sur l'IA qui vou
 
 1. Clonez ce dépôt :
 
+Ouvrir un terminal puis taper ses lignes de commande
+
 ```bash
+cd Desktop
 git clone https://github.com/Blowdok/Blow-Chat-YT.git
 cd Blow-Chat-YT
 ```
