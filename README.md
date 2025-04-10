@@ -1,9 +1,5 @@
 # Blow Chat YT
 
-![Blow Chat YT Logo](https://via.placeholder.com/150)
-
-## 📷 Captures d'écran
-
 ![Interface principale](screenshot/1.png)
 
 ![Analyse YouTube](screenshot/2.png)

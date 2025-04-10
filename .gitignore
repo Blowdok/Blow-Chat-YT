@@ -73,3 +73,7 @@ wheels/
 
 # Jupyter Notebook
 .ipynb_checkpoints 
+
+# Fichiers .bat
+*.bat
+
