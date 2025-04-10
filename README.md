@@ -1,5 +1,14 @@
 # Blow Chat YT
 
+## Réseaux
+
+- Chaine Youtube
+  - [Open IA Studio](https://www.youtube.com/@openiastudio)
+- Skool
+  - [IA Mastery](https://www.skool.com/@blow-dok-9542?g=ia-mastery)
+
+## Screenshot
+
 ![Interface principale](screenshot/1.png)
 
 ![Analyse YouTube](screenshot/2.png)
