@@ -53,7 +53,7 @@ Blow Chat YT est un assistant conversationnel intelligent basé sur l'IA qui vou
   - Créez un compte sur [GroqCloud](https://console.groq.com/home) pour obtenir votre clé API
   - L'inscription est gratuite et vous donne accès à divers modèles de langage performants
 - Une clé API YouTube pour les fonctionnalités YouTube (extraction de transcriptions et métadonnées)
-  - Créez un compte sur [Google Cloud Console](https://console.cloud.google.com/)
+  - Créez un compte sur [Google Cloud Console](https://console.cloud.google.com/) (c'est gratuit)
   - Créez un projet et activez l'API YouTube Data v3
   - Générez une clé API dans la section "Identifiants"
   - Pour plus de détails, consultez la [documentation officielle](https://developers.google.com/youtube/v3/getting-started)
@@ -65,7 +65,7 @@ Blow Chat YT est un assistant conversationnel intelligent basé sur l'IA qui vou
 1. Téléchargez l'application en cliquant sur le bouton vert "Code" en haut sur cette page GitHub, puis "Download ZIP", et enregister sur votre bureau par exemple
 2. Extraire le fichier rar sur votre bureau avec winrar (Pc) ou winzip (Mac)
 
-- Téléchargez ici [Winrar](https://www.win-rar.com/predownload.html?&L=10) [WinZip Mac](https://www.winzip.com/en/product/winzip/mac/)
+- Téléchargez ici [Winrar](https://www.win-rar.com/predownload.html?&L=10) ou [WinZip Mac](https://www.winzip.com/en/product/winzip/mac/)
 
 3. Ouvrez une invite de commande ou un terminal et entrer ses commandes
 
@@ -112,7 +112,7 @@ source myvenv/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Configurez vos clés API (c'est gratuit):
+3. Configurez vos clés API :
    - Modifiez le fichier `config.ini` ou entrez vos clés directement dans l'application
    - Pour l'API Groq, connectez-vous sur [console.groq.com](https://console.groq.com/home) et générez votre clé API dans la section "API Keys"
    - Pour l'API YouTube, suivez les étapes dans la [console Google Cloud](https://console.cloud.google.com/) pour activer l'API YouTube Data v3 et générer une clé API
