@@ -260,7 +260,7 @@ def load_vector_database(db_filename='transcript_vectors.pkl'):
 
 
 # Fonction pour rechercher les documents pertinents
-def search_documents(query, index, data, top_k=10, max_context_length=3500):
+def search_documents(query, index, data, top_k=10, max_context_length=4000):
     """
     Recherche les documents les plus pertinents pour une requête donnée.
     Limite la longueur totale du contexte.
@@ -352,7 +352,7 @@ def generate_answer(query, context, text_widget, model_name='meta-llama/llama-4-
         try:
             llm = ChatGroq(
                 model=model_name,
-                temperature=0.5,
+                temperature=0.3,
                 max_tokens=6000,
                 timeout=None,
                 max_retries=2,
