@@ -1086,7 +1086,7 @@ send_button.pack(side="left", expand=True, padx=5)
 entry.bind("<Return>", on_submit)
 
 # Case à cocher pour utiliser la base de données
-use_db_checkbox = ctk.CTkCheckBox(assistant_tab, text="Utiliser la base de données pour améliorer les réponses", variable=use_database)
+use_db_checkbox = ctk.CTkCheckBox(assistant_tab, text="Utiliser la base de données", variable=use_database)
 use_db_checkbox.pack(pady=5)
 
 # Widgets pour l'onglet Outil YouTube

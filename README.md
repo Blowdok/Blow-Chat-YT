@@ -146,7 +146,7 @@ python app.py
    - **Outil YouTube** : Pour télécharger des transcriptions de vidéo YT, soit des vidéos spécifique, soit toutes les vidéos d'une chaine
    - **Outil bases de données** : Créer une base de donnée vectorielle avec les transcriptions recueillies par Outil YouTube
 
-## 🎨 Personnalisation
+## �� Personnalisation
 
 L'application peut être entièrement personnalisée via le menu Paramètres :
 
