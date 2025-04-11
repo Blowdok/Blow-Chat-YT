@@ -121,6 +121,8 @@ source myvenv/bin/activate
 pip install -r requirements.txt
 ```
 
+Note : Veuillez patienter pendant l'installation des dépendances, cela peut prendre un moment.
+
 3. Configurez vos clés API :
    - Modifiez le fichier `config.ini` ou entrez vos clés directement dans l'application
    - Pour l'API Groq, connectez-vous sur [console.groq.com](https://console.groq.com/home) et générez votre clé API dans la section "API Keys"
