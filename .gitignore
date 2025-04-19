@@ -1,0 +1,79 @@
+# Environnements virtuels Python
+venv/
+myvenv/
+env/
+ENV/
+.venv/
+.env
+
+# Fichiers compilés Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Fichiers de configuration IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Fichiers de log
+*.log
+
+# Fichiers temporaires
+*.tmp
+temp/
+
+# Fichiers spécifiques à Blow Chat YT
+1_history_pkl/
+2_conversation_txt/
+3_transcriptions/
+4_markdown_reports/
+5_database/
+*.pkl
+
+# Clés API et secrets (par sécurité)
+.env
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebook
+.ipynb_checkpoints 
+
+# Fichiers .bat
+*.bat
+
