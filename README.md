@@ -86,6 +86,16 @@ La version 2.0 frappe fort avec une architecture modulaire, plus robuste, parfai
 Cette V2.0, c’est plus de contrôle, plus de clarté dans les mains des utilisateurs.
 La mise à jour vous donne les clés travailler proprement !
 
+### Problème possible avec Linux
+
+Si vous rencontrez des problèmes d'installation ou de fonctionnement essayer ceci :
+
+- Dans le fichier interface.py commenté la ligne 590 :
+  - settings_window.grab_set() # Rendre la fenêtre modale
+- Ajouter les dépendances tkinter et hugging face :
+  - apt-get install python3-tk
+  - pip install hf_xet
+
 ## 🔧 Technologies utilisées
 
 - **Python** :
