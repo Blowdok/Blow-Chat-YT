@@ -210,7 +210,7 @@ class BlowChatInterface:
     def _create_left_sidebar(self):
         """Création du contenu de la sidebar gauche"""
         # Base de données
-        db_label = ctk.CTkLabel(self.left_frame, text="Base de Données :")
+        db_label = ctk.CTkLabel(self.left_frame, text="Choisir Base de Données puis charger DB:")
         db_label.pack(pady=5)
         
         # Dropdown pour sélectionner la base
@@ -305,7 +305,7 @@ class BlowChatInterface:
         options_frame = ctk.CTkFrame(self.assistant_tab)
         options_frame.pack(fill="x", pady=5)
         
-        use_db_checkbox = ctk.CTkCheckBox(options_frame, text="Utiliser la base de données", variable=self.use_database)
+        use_db_checkbox = ctk.CTkCheckBox(options_frame, text="Cocher pour utiliser la base de données", variable=self.use_database)
         use_db_checkbox.pack(side="left", padx=20)
         
     def _create_youtube_tab(self):
@@ -323,12 +323,12 @@ class BlowChatInterface:
         
         channel_id_label = ctk.CTkLabel(left_column, text="Nom ou ID de la chaîne YouTube:")
         channel_id_label.pack(pady=5, anchor="w")
-        self.channel_id_entry = ctk.CTkEntry(left_column, width=300)
+        self.channel_id_entry = ctk.CTkEntry(left_column, width=300, placeholder_text="ex: @openiastudio")
         self.channel_id_entry.pack(pady=5, fill="x")
         
         video_ids_label = ctk.CTkLabel(left_column, text="IDs ou URLs des vidéos (séparés par des virgules) :")
         video_ids_label.pack(pady=5, anchor="w")
-        self.video_ids_entry = ctk.CTkEntry(left_column, width=300)
+        self.video_ids_entry = ctk.CTkEntry(left_column, width=400, placeholder_text="ex: https://www.youtube.com/watch?v=Pzr_bc9OOFw&t=634s")
         self.video_ids_entry.pack(pady=5, fill="x")
         
         # Colonne droite
@@ -366,13 +366,13 @@ class BlowChatInterface:
         create_label.pack(pady=5)
         
         # Nom de la base
-        db_name_label = ctk.CTkLabel(create_frame, text="Nom de la base de données:")
+        db_name_label = ctk.CTkLabel(create_frame, text="Donner un nom à la base:")
         db_name_label.pack(pady=5, anchor="w")
         db_name_entry = ctk.CTkEntry(create_frame, textvariable=self.new_database_name, width=200)
         db_name_entry.pack(pady=5, fill="x")
         
         # Dossier source
-        source_label = ctk.CTkLabel(create_frame, text="Dossier source:")
+        source_label = ctk.CTkLabel(create_frame, text="Choisir un dossier source \n ou ajouter via le menu Base de données:")
         source_label.pack(pady=5, anchor="w")
         
         # Obtenir la liste des sources disponibles
@@ -407,7 +407,7 @@ class BlowChatInterface:
         enrich_label.pack(pady=5)
         
         # Base à enrichir (utilise la même variable que pour le chargement)
-        enrich_db_label = ctk.CTkLabel(enrich_frame, text="Base à enrichir:")
+        enrich_db_label = ctk.CTkLabel(enrich_frame, text="Choisir une base à enrichir:")
         enrich_db_label.pack(pady=5, anchor="w")
         
         # Utiliser le même dropdown que dans la sidebar (mais avec un widget différent)

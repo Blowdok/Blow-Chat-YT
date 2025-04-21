@@ -200,13 +200,14 @@ python app.py
 3. Utilisez les fonctionnalités des 3 onglets :
    - **Assistant** : Posez des questions à l'assistant, avec ou sans base de donnée
    - **Outil YouTube** : Pour télécharger des transcriptions de vidéo YT, soit des vidéos spécifiques, soit toutes les vidéos d'une chaîne
-   - **Outil bases de données** : Créer une base de donnée vectorielle avec les transcriptions recueillies par Outil YouTube
-4. Base de données :
+   - **Outil bases de données** :
+   - Créer une base de donnée vectorielle avec les transcriptions de vidéos recueillies par Outil YouTube (dossier source: 3_transcription) ou avec vos propres documents (ajouter un dossier source via le menu Base de données)
+   - Vous pouvez aussi enrichir une base existante (dans le menu déroulant) avec de nouvelles sources
+   - Lors de l'enrichissement, les fichiers déjà présents dans la base sont automatiquement ignorés pour éviter les doublons
+4. Base de données (barre latérale gauche):
 
    - Pour utiliser une base de données, sélectionnez-la dans le menu déroulant et cliquez sur "Charger DB"
    - Cochez "Utiliser la base de données" pour intégrer le contenu de la base dans vos conversations
-   - Vous pouvez enrichir une base existante avec de nouvelles sources via l'onglet "Outil Base de Données"
-   - Lors de l'enrichissement, les fichiers déjà présents dans la base sont automatiquement ignorés pour éviter les doublons
 
 5. Fermeture de l'application :
    - Utilisez le bouton de fermeture de fenêtre normal ou tapez "exit" dans la zone de conversation
