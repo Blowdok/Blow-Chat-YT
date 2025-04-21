@@ -125,7 +125,7 @@ La mise à jour vous donne les clés travailler proprement !
 
 ### Méthode 1 : Téléchargement direct (sans Git)
 
-1. Téléchargez l'application en cliquant sur le bouton vert "Code" en haut sur cette page GitHub, puis "Download ZIP", et enregister sur votre bureau par exemple
+1. Téléchargez l'application en cliquant sur le bouton vert "Code" en haut sur cette page GitHub, puis "Download ZIP", et enregister sur votre bureau
 2. Extraire le fichier ZIP sur votre bureau avec winrar (PC) ou l'outil d'extraction intégré (Mac)
 
 - Téléchargez ici [Winrar](https://www.win-rar.com/predownload.html?&L=10) si nécessaire
