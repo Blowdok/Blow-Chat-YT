@@ -134,7 +134,7 @@ La mise à jour vous donne les clés travailler proprement !
 
 ```bash
 cd Desktop
-cd Blow-Chat-YT
+cd Blow-Chat-YT-master
 ```
 
 ### Méthode 2 : Avec Git (optionnel)
