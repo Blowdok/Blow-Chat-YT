@@ -92,7 +92,7 @@ Si vous rencontrez des problèmes d'installation ou de fonctionnement essayer ce
 
 - Dans le fichier interface.py commenté la ligne 590 :
   - settings_window.grab_set() # Rendre la fenêtre modale
-- Ajouter les dépendances tkinter et hugging face :
+- Ajouter les dépendances tkinter et hugging face via le terminal et assurez vous d'avoir activé l'environnement virtuel :
   - apt-get install python3-tk
   - pip install hf_xet
 
