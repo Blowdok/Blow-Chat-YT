@@ -121,6 +121,7 @@ class BlowChatInterface:
         self.groq_api_key = ctk.StringVar()
         self.use_database = ctk.BooleanVar(value=False)
         self.speed_var = ctk.StringVar(value="Normal")
+        self.huggingface_token = ctk.StringVar()
         
         # Variables pour les bases de données
         self.selected_database = ctk.StringVar(value="")  # Base sélectionnée
@@ -599,13 +600,40 @@ class BlowChatInterface:
         groq_api_entry = ctk.CTkEntry(settings_window, width=300, textvariable=self.groq_api_key)
         groq_api_entry.pack(pady=5)
         
+        # Ajout du champ pour le token Hugging Face
+        hf_token_label = ctk.CTkLabel(settings_window, text="Hugging Face Token:")
+        hf_token_label.pack(pady=5)
+        
+        # Créer la variable si elle n'existe pas
+        if not hasattr(self, 'huggingface_token'):
+            self.huggingface_token = tk.StringVar()
+            # Charger la valeur depuis la configuration si disponible
+            from app import BlowChatApp
+            app_instance = BlowChatApp()
+            self.huggingface_token.set(app_instance.config.get('API_KEYS', 'huggingface_token', fallback=''))
+        
+        hf_token_entry = ctk.CTkEntry(settings_window, width=300, textvariable=self.huggingface_token)
+        hf_token_entry.pack(pady=5)
+        
         def save_api_keys():
+            # Sauvegarder le token Hugging Face dans la configuration
+            from app import BlowChatApp
+            app_instance = BlowChatApp()
+            
+            # Mettre à jour les clés API dans la configuration
+            app_instance.update_config('API_KEYS', 'youtube_api_key', self.youtube_api_key.get())
+            app_instance.update_config('API_KEYS', 'groq_api_key', self.groq_api_key.get())
+            
+            # Mettre à jour et réappliquer l'authentification Hugging Face
+            app_instance.update_huggingface_token(self.huggingface_token.get())
+            
             messagebox.showinfo("Succès", "Clés API sauvegardées avec succès.")
             settings_window.destroy()
         
         def reset_api_keys():
             self.youtube_api_key.set('')
             self.groq_api_key.set('')
+            self.huggingface_token.set('')
         
         save_button = ctk.CTkButton(settings_window, text="Sauvegarder", command=save_api_keys)
         save_button.pack(pady=5)
