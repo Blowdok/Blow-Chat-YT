@@ -15,7 +15,7 @@
 ### Modifié
 
 - Amélioration de la gestion des erreurs lors du chargement des modèles sentence-transformers
-- Mise à jour du fichier `requirements.txt` pour inclure `huggingface_hub>=0.23`
+- Mise à jour du fichier `requirements.txt` pour inclure `huggingface_hub`
 - Amélioration des méthodes `create_vector_database` et `enrich_vector_database` pour une meilleure gestion des erreurs d'authentification
 
 ### Corrigé
