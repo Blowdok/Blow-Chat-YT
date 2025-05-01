@@ -18,6 +18,7 @@ from urllib.parse import parse_qs, urlparse
 import faiss
 import PyPDF2
 from googleapiclient.discovery import build
+from huggingface_hub import login
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 from sentence_transformers import SentenceTransformer
@@ -119,9 +120,34 @@ class BlowChatApp:
         # Charger la configuration (UNE SEULE FOIS ICI)
         self.load_config()
         
+        # Initialiser l'authentification Hugging Face
+        self.init_huggingface_auth()
+        
         # Initialiser l'interface
         self.init_interface()
         
+    def init_huggingface_auth(self):
+        """Initialise l'authentification avec Hugging Face Hub"""
+        try:
+            # D'abord vérifier les variables d'environnement
+            hf_token = os.environ.get('HUGGINGFACE_TOKEN')
+            
+            # Si non trouvé, vérifier dans le fichier de configuration
+            if not hf_token:
+                hf_token = self.config.get('API_KEYS', 'huggingface_token', fallback='')
+                
+            # S'authentifier seulement si un token est disponible
+            if hf_token:
+                login(token=hf_token)
+                print("Authentification Hugging Face réussie")
+            else:
+                print("Avertissement: Aucun token Hugging Face trouvé. Certaines fonctionnalités peuvent être limitées.")
+                
+        except Exception as e:
+            import logging
+            logging.getLogger('BlowChatYT').error(f"Erreur lors de l'initialisation de l'authentification Hugging Face: {e}")
+            print(f"Erreur d'authentification Hugging Face: {e}")
+    
     def create_directories(self):
         """Crée les répertoires nécessaires pour l'application"""
         directories = [
@@ -902,29 +928,48 @@ class BlowChatApp:
     
     def load_vector_database(self, db_name):
         """
-        Charge la base de données vectorielle et l'index FAISS correspondant au nom spécifié.
+        Charge une base de données vectorielle.
         
         Args:
             db_name: Nom de la base de données à charger
             
         Returns:
-            tuple: (index FAISS, données des documents)
+            Tuple (index, data) ou None en cas d'erreur
         """
-        # Chemins des fichiers
-        database_folder = self.config.get('Directories', 'database', fallback='5_database')
-        index_path = os.path.join(database_folder, f'faiss_index_{db_name}.bin')
-        db_path = os.path.join(database_folder, f'{db_name}.pkl')
-        
-        # Vérifier l'existence des fichiers
-        if not os.path.exists(index_path) or not os.path.exists(db_path):
-            raise FileNotFoundError(f"Les fichiers de la base de données '{db_name}' n'existent pas")
-        
-        # Charger l'index FAISS
-        index = faiss.read_index(index_path)
-        # Charger les métadonnées
-        with open(db_path, 'rb') as f:
-            data = pickle.load(f)
-        return index, data
+        try:
+            # Vérifier que la base existe
+            database_folder = self.config.get('Directories', 'database', fallback='5_database')
+            db_path = os.path.join(database_folder, f'{db_name}.pkl')
+            index_path = os.path.join(database_folder, f'faiss_index_{db_name}.bin')
+            
+            if not os.path.exists(db_path) or not os.path.exists(index_path):
+                print(f"La base de données '{db_name}' n'existe pas")
+                return None
+            
+            # Charger les données
+            with open(db_path, 'rb') as f:
+                data = pickle.load(f)
+            
+            # Charger l'index FAISS
+            index = faiss.read_index(index_path)
+            
+            # S'assurer que le modèle SentenceTransformer est disponible
+            # (nécessaire pour les recherches futures)
+            model_name = 'sentence-transformers/all-MiniLM-L6-v2'
+            try:
+                model = SentenceTransformer(model_name)
+                print(f"Modèle {model_name} chargé avec succès pour la recherche")
+            except Exception as e:
+                import logging
+                logging.getLogger('BlowChatYT').error(f"Erreur lors de l'initialisation du service d'embeddings pour la recherche: {e}")
+                print(f"Attention: Impossible de charger le modèle SentenceTransformer. Les recherches pourraient ne pas fonctionner correctement. Erreur: {e}")
+            
+            return index, data
+        except Exception as e:
+            import logging
+            logging.getLogger('BlowChatYT').error(f"Erreur lors du chargement de la base de données: {e}")
+            print(f"Erreur lors du chargement de la base de données '{db_name}': {e}")
+            return None
     
     def search_documents(self, query, index, data, top_k=10, max_context_length=4000):
         """
@@ -1064,71 +1109,83 @@ class BlowChatApp:
             source_folder: Dossier contenant les fichiers source
             chunk_size: Taille des chunks de texte
         """
-        # Charger le modèle de transformation
-        model = SentenceTransformer('all-MiniLM-L6-v2')
-        
-        # Vérifier que le dossier source existe
-        if not os.path.exists(source_folder):
-            raise FileNotFoundError(f"Le dossier source '{source_folder}' n'existe pas")
-        
-        # Lire toutes les transcriptions et les PDF
-        documents = []
-        filenames = []
-        metadata = []
-        for filename in os.listdir(source_folder):
-            filepath = os.path.join(source_folder, filename)
-            if filename.endswith('.txt'):
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    text = f.read()
-            elif filename.endswith('.pdf'):
-                with open(filepath, 'rb') as f:
-                    reader = PyPDF2.PdfReader(f)
-                    text = ''
-                    for page in reader.pages:
-                        text += page.extract_text()
-            else:
-                continue  # Ignorer les autres types de fichiers
+        try:
+            # Charger le modèle de transformation
+            model_name = 'sentence-transformers/all-MiniLM-L6-v2'
+            try:
+                model = SentenceTransformer(model_name)
+                print(f"Modèle {model_name} chargé avec succès")
+            except Exception as e:
+                import logging
+                logging.getLogger('BlowChatYT').error(f"Erreur lors de l'initialisation du service d'embeddings: {e}")
+                raise ValueError(f"Impossible de charger le modèle {model_name}. Veuillez vérifier votre connexion internet et votre token Hugging Face. Erreur: {e}")
             
-            # Diviser le texte en chunks
-            text_chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
-            documents.extend(text_chunks)
-            filenames.extend([filename] * len(text_chunks))
-            metadata.extend([{'filename': filename, 'chunk_index': idx, 'source_folder': source_folder} for idx in range(len(text_chunks))])
-        
-        # Vérifier qu'il y a des documents à traiter
-        if not documents:
-            raise ValueError(f"Aucun document texte ou PDF trouvé dans le dossier '{source_folder}'")
-        
-        # Encoder les documents en vecteurs
-        vectors = model.encode(documents)
-        
-        # Dossier de la base de données depuis la configuration
-        database_folder = self.config.get('Directories', 'database', fallback='5_database')
-        if not os.path.exists(database_folder):
-            os.makedirs(database_folder)
-        
-        # Chemins des fichiers
-        index_path = os.path.join(database_folder, f'faiss_index_{db_name}.bin')
-        db_path = os.path.join(database_folder, f'{db_name}.pkl')
-        
-        # Créer l'index FAISS
-        dimension = vectors.shape[1]
-        index = faiss.IndexFlatL2(dimension)
-        index.add(vectors)
-        
-        # Sauvegarder l'index et les métadonnées
-        faiss.write_index(index, index_path)
-        with open(db_path, 'wb') as f:
-            pickle.dump({
-                'filenames': filenames, 
-                'documents': documents, 
-                'metadata': metadata,
-                'creation_date': os.path.getctime(db_path) if os.path.exists(db_path) else None,
-                'last_modified': os.path.getmtime(db_path) if os.path.exists(db_path) else None,
-                'source_folder': source_folder,
-                'chunk_size': chunk_size,
-                'num_documents': len(documents)
-            }, f)
+            # Vérifier que le dossier source existe
+            if not os.path.exists(source_folder):
+                raise FileNotFoundError(f"Le dossier source '{source_folder}' n'existe pas")
+            
+            # Lire toutes les transcriptions et les PDF
+            documents = []
+            filenames = []
+            metadata = []
+            for filename in os.listdir(source_folder):
+                filepath = os.path.join(source_folder, filename)
+                if filename.endswith('.txt'):
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        text = f.read()
+                elif filename.endswith('.pdf'):
+                    with open(filepath, 'rb') as f:
+                        reader = PyPDF2.PdfReader(f)
+                        text = ''
+                        for page in reader.pages:
+                            text += page.extract_text()
+                else:
+                    continue  # Ignorer les autres types de fichiers
+                
+                # Diviser le texte en chunks
+                text_chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+                documents.extend(text_chunks)
+                filenames.extend([filename] * len(text_chunks))
+                metadata.extend([{'filename': filename, 'chunk_index': idx, 'source_folder': source_folder} for idx in range(len(text_chunks))])
+            
+            # Vérifier qu'il y a des documents à traiter
+            if not documents:
+                raise ValueError(f"Aucun document texte ou PDF trouvé dans le dossier '{source_folder}'")
+            
+            # Encoder les documents en vecteurs
+            vectors = model.encode(documents)
+            
+            # Dossier de la base de données depuis la configuration
+            database_folder = self.config.get('Directories', 'database', fallback='5_database')
+            if not os.path.exists(database_folder):
+                os.makedirs(database_folder)
+            
+            # Chemins des fichiers
+            index_path = os.path.join(database_folder, f'faiss_index_{db_name}.bin')
+            db_path = os.path.join(database_folder, f'{db_name}.pkl')
+            
+            # Créer l'index FAISS
+            dimension = vectors.shape[1]
+            index = faiss.IndexFlatL2(dimension)
+            index.add(vectors)
+            
+            # Sauvegarder l'index et les métadonnées
+            faiss.write_index(index, index_path)
+            with open(db_path, 'wb') as f:
+                pickle.dump({
+                    'filenames': filenames, 
+                    'documents': documents, 
+                    'metadata': metadata,
+                    'creation_date': os.path.getctime(db_path) if os.path.exists(db_path) else None,
+                    'last_modified': os.path.getmtime(db_path) if os.path.exists(db_path) else None,
+                    'source_folder': source_folder,
+                    'chunk_size': chunk_size,
+                    'num_documents': len(documents)
+                }, f)
+        except Exception as e:
+            import logging
+            logging.getLogger('BlowChatYT').error(f"Erreur lors de la création de la base de données vectorielle: {e}")
+            raise
     
     def enrich_database(self, output_widget):
         """
@@ -1177,130 +1234,143 @@ class BlowChatApp:
             output_widget: Widget pour afficher les sorties
             chunk_size: Taille des chunks de texte
         """
-        # Vérifier que la base existe
-        database_folder = self.config.get('Directories', 'database', fallback='5_database')
-        db_path = os.path.join(database_folder, f'{db_name}.pkl')
-        index_path = os.path.join(database_folder, f'faiss_index_{db_name}.bin')
-        
-        if not os.path.exists(db_path) or not os.path.exists(index_path):
-            output_widget._textbox.insert("end", f"Erreur : La base de données '{db_name}' n'existe pas.\n", 'system')
-            return
-        
-        # Charger la base existante
-        index = faiss.read_index(index_path)
-        with open(db_path, 'rb') as f:
-            data = pickle.load(f)
-        
-        # Créer un ensemble des noms de fichiers déjà présents dans la base pour une recherche rapide
-        existing_filenames = set()
-        if 'filenames' in data:
-            existing_filenames = set(data['filenames'])
-        
-        # Charger le modèle de transformation
-        model = SentenceTransformer('all-MiniLM-L6-v2')
-        
-        # Lire les nouveaux documents
-        new_documents = []
-        new_filenames = []
-        new_metadata = []
-        skipped_files = []
-        
-        for filename in os.listdir(source_folder):
-            filepath = os.path.join(source_folder, filename)
+        try:
+            # Vérifier que la base existe
+            database_folder = self.config.get('Directories', 'database', fallback='5_database')
+            db_path = os.path.join(database_folder, f'{db_name}.pkl')
+            index_path = os.path.join(database_folder, f'faiss_index_{db_name}.bin')
             
-            # Vérifier si le fichier est déjà dans la base (par le nom)
-            if filename in existing_filenames:
-                skipped_files.append(filename)
-                continue  # Ignorer les fichiers déjà présents
+            if not os.path.exists(db_path) or not os.path.exists(index_path):
+                output_widget._textbox.insert("end", f"Erreur : La base de données '{db_name}' n'existe pas.\n", 'system')
+                return
+            
+            # Charger la base existante
+            index = faiss.read_index(index_path)
+            with open(db_path, 'rb') as f:
+                data = pickle.load(f)
+            
+            # Créer un ensemble des noms de fichiers déjà présents dans la base pour une recherche rapide
+            existing_filenames = set()
+            if 'filenames' in data:
+                existing_filenames = set(data['filenames'])
+            
+            # Charger le modèle de transformation
+            model_name = 'sentence-transformers/all-MiniLM-L6-v2'
+            try:
+                model = SentenceTransformer(model_name)
+                print(f"Modèle {model_name} chargé avec succès pour l'enrichissement")
+            except Exception as e:
+                import logging
+                logging.getLogger('BlowChatYT').error(f"Erreur lors de l'initialisation du service d'embeddings pour l'enrichissement: {e}")
+                output_widget._textbox.insert("end", f"Erreur : Impossible de charger le modèle de transformation. Vérifiez votre connexion internet et votre token Hugging Face.\n", 'system')
+                return
                 
-            if filename.endswith('.txt'):
-                with open(filepath, 'r', encoding='utf-8') as f:
-                    text = f.read()
-            elif filename.endswith('.pdf'):
-                with open(filepath, 'rb') as f:
-                    reader = PyPDF2.PdfReader(f)
-                    text = ''
-                    for page in reader.pages:
-                        text += page.extract_text()
+            # Lire les nouveaux documents
+            new_documents = []
+            new_filenames = []
+            new_metadata = []
+            skipped_files = []
+            
+            for filename in os.listdir(source_folder):
+                filepath = os.path.join(source_folder, filename)
+                
+                # Vérifier si le fichier est déjà dans la base (par le nom)
+                if filename in existing_filenames:
+                    skipped_files.append(filename)
+                    continue  # Ignorer les fichiers déjà présents
+                    
+                if filename.endswith('.txt'):
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        text = f.read()
+                elif filename.endswith('.pdf'):
+                    with open(filepath, 'rb') as f:
+                        reader = PyPDF2.PdfReader(f)
+                        text = ''
+                        for page in reader.pages:
+                            text += page.extract_text()
+                else:
+                    continue  # Ignorer les autres types de fichiers
+                
+                # Diviser le texte en chunks
+                text_chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
+                
+                if text_chunks:
+                    new_documents.extend(text_chunks)
+                    new_filenames.extend([filename] * len(text_chunks))
+                    
+                    # Index initial pour les nouveaux chunks
+                    start_idx = len(data['documents']) if 'documents' in data else 0
+                    
+                    new_metadata.extend([{
+                        'filename': filename, 
+                        'chunk_index': start_idx + idx, 
+                        'source_folder': source_folder,
+                        'added_date': os.path.getmtime(filepath)
+                    } for idx in range(len(text_chunks))])
+            
+            # Afficher les fichiers ignorés
+            if skipped_files:
+                ignored_msg = f"Les fichiers suivants étaient déjà présents dans la base et ont été ignorés : {', '.join(skipped_files)}"
+                output_widget._textbox.insert("end", f"{ignored_msg}\n", 'system')
+            
+            # Vérifier qu'il y a des documents à ajouter
+            if not new_documents:
+                output_widget._textbox.insert("end", f"Aucun nouveau document à ajouter depuis '{source_folder}'.\n", 'system')
+                # Ajout d'un saut de ligne pour séparer ce bloc d'action
+                output_widget._textbox.insert("end", "\n", 'system')
+                return
+            
+            # Encoder les nouveaux documents
+            output_widget._textbox.insert("end", f"Encodage de {len(new_documents)} nouveaux segments...\n", 'system')
+            new_vectors = model.encode(new_documents)
+            
+            # Ajouter les nouveaux vecteurs à l'index
+            index.add(new_vectors)
+            
+            # Mettre à jour les métadonnées
+            if 'filenames' in data:
+                data['filenames'].extend(new_filenames)
             else:
-                continue  # Ignorer les autres types de fichiers
-            
-            # Diviser le texte en chunks
-            text_chunks = [text[i:i+chunk_size] for i in range(0, len(text), chunk_size)]
-            
-            if text_chunks:
-                new_documents.extend(text_chunks)
-                new_filenames.extend([filename] * len(text_chunks))
+                data['filenames'] = new_filenames
                 
-                # Index initial pour les nouveaux chunks
-                start_idx = len(data['documents']) if 'documents' in data else 0
+            if 'documents' in data:
+                data['documents'].extend(new_documents)
+            else:
+                data['documents'] = new_documents
                 
-                new_metadata.extend([{
-                    'filename': filename, 
-                    'chunk_index': start_idx + idx, 
-                    'source_folder': source_folder,
-                    'added_date': os.path.getmtime(filepath)
-                } for idx in range(len(text_chunks))])
-        
-        # Afficher les fichiers ignorés
-        if skipped_files:
-            ignored_msg = f"Les fichiers suivants étaient déjà présents dans la base et ont été ignorés : {', '.join(skipped_files)}"
-            output_widget._textbox.insert("end", f"{ignored_msg}\n", 'system')
-        
-        # Vérifier qu'il y a des documents à ajouter
-        if not new_documents:
-            output_widget._textbox.insert("end", f"Aucun nouveau document à ajouter depuis '{source_folder}'.\n", 'system')
+            if 'metadata' in data:
+                data['metadata'].extend(new_metadata)
+            else:
+                data['metadata'] = new_metadata
+            
+            # Mettre à jour les informations de la base
+            data['last_modified'] = os.path.getmtime(db_path) if os.path.exists(db_path) else None
+            data['num_documents'] = len(data['documents']) if 'documents' in data else len(new_documents)
+            
+            # Ajouter les sources
+            if 'sources' not in data:
+                data['sources'] = []
+            
+            if source_folder not in data['sources']:
+                data['sources'].append(source_folder)
+            
+            # Sauvegarder l'index et les métadonnées mis à jour
+            faiss.write_index(index, index_path)
+            with open(db_path, 'wb') as f:
+                pickle.dump(data, f)
+            
+            output_widget._textbox.insert("end", f"Base de données '{db_name}' enrichie avec {len(new_documents)} nouveaux segments.\n", 'system')
+            
             # Ajout d'un saut de ligne pour séparer ce bloc d'action
             output_widget._textbox.insert("end", "\n", 'system')
-            return
-        
-        # Encoder les nouveaux documents
-        output_widget._textbox.insert("end", f"Encodage de {len(new_documents)} nouveaux segments...\n", 'system')
-        new_vectors = model.encode(new_documents)
-        
-        # Ajouter les nouveaux vecteurs à l'index
-        index.add(new_vectors)
-        
-        # Mettre à jour les métadonnées
-        if 'filenames' in data:
-            data['filenames'].extend(new_filenames)
-        else:
-            data['filenames'] = new_filenames
             
-        if 'documents' in data:
-            data['documents'].extend(new_documents)
-        else:
-            data['documents'] = new_documents
-            
-        if 'metadata' in data:
-            data['metadata'].extend(new_metadata)
-        else:
-            data['metadata'] = new_metadata
-        
-        # Mettre à jour les informations de la base
-        data['last_modified'] = os.path.getmtime(db_path) if os.path.exists(db_path) else None
-        data['num_documents'] = len(data['documents']) if 'documents' in data else len(new_documents)
-        
-        # Ajouter les sources
-        if 'sources' not in data:
-            data['sources'] = []
-        
-        if source_folder not in data['sources']:
-            data['sources'].append(source_folder)
-        
-        # Sauvegarder l'index et les métadonnées mis à jour
-        faiss.write_index(index, index_path)
-        with open(db_path, 'wb') as f:
-            pickle.dump(data, f)
-        
-        output_widget._textbox.insert("end", f"Base de données '{db_name}' enrichie avec {len(new_documents)} nouveaux segments.\n", 'system')
-        
-        # Ajout d'un saut de ligne pour séparer ce bloc d'action
-        output_widget._textbox.insert("end", "\n", 'system')
-        
-        # Si la base actuelle est ouverte, la recharger
-        if self.current_database_name == db_name:
-            self.load_database(db_name)
+            # Si la base actuelle est ouverte, la recharger
+            if self.current_database_name == db_name:
+                self.load_database(db_name)
+        except Exception as e:
+            output_widget._textbox.insert("end", f"Erreur lors de l'enrichissement de la base : {e}\n", 'system')
+            # Ajout d'un saut de ligne pour séparer ce bloc d'action même en cas d'erreur
+            output_widget._textbox.insert("end", "\n", 'system')
     
     def start_youtube_tool(self, channel_name, video_ids_input, num_videos_str, api_key, output_widget):
         """
@@ -1736,6 +1806,25 @@ class BlowChatApp:
             print(f"Erreur lors de la vérification de la configuration: {e}")
             # Tenter une réparation d'urgence
             self._create_default_config()
+            
+    def update_huggingface_token(self, token):
+        """
+        Met à jour le token Hugging Face et réapplique l'authentification
+        
+        Args:
+            token: Nouveau token Hugging Face à utiliser
+        """
+        try:
+            # Mettre à jour la configuration
+            self.update_config('API_KEYS', 'huggingface_token', token)
+            
+            # Réappliquer l'authentification
+            self.init_huggingface_auth()
+            
+            return True
+        except Exception as e:
+            print(f"Erreur lors de la mise à jour du token Hugging Face: {e}")
+            return False
             
 
 if __name__ == "__main__":
