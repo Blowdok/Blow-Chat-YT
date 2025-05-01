@@ -9,3 +9,4 @@ PyPDF2
 requests
 youtube_transcript_api
 google-api-python-client
+huggingface_hub
