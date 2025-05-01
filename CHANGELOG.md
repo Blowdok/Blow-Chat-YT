@@ -1,19 +1,5 @@
 # Changelog
 
-## [Unreleased]
-
-### Ajouté
-
-- 
-
-### Changé
-
-- 
-
-### Corrigé
-
-- 
-
 ## [2.0.1] - 2025-05-01
 
 ### Ajouté
