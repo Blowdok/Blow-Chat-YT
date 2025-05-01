@@ -72,7 +72,7 @@ La version 2.0 frappe fort avec une architecture modulaire, plus robuste, parfai
 
 - 👉 une meilleure maintenabilité
 - 👉 une évolutivité à long terme
-- 💡 Plusieurs axes d’amélioration ont été mis en place pour booster l'expérience utilisateur :
+- 💡 Plusieurs axes d'amélioration ont été mis en place pour booster l'expérience utilisateur :
 
 ### ✅ Les nouveautés majeures :
 
@@ -83,7 +83,7 @@ La version 2.0 frappe fort avec une architecture modulaire, plus robuste, parfai
 - 🔹 Régler la taille des chunks directement via l'interface
 - 🔹 Choisir la base avec laquelle interagir en un clic via menu déroulant
 
-Cette V2.0, c’est plus de contrôle, plus de clarté dans les mains des utilisateurs.
+Cette V2.0, c'est plus de contrôle, plus de clarté dans les mains des utilisateurs.
 La mise à jour vous donne les clés travailler proprement !
 
 ### Problème possible avec Linux
@@ -115,6 +115,8 @@ pip install hf_xet
   Pour extraire les transcriptions de vidéos YouTube
 - **API Groq** :
   Pour accéder aux modèles de langage avancés comme Llama 4, deepseek-r1-distill-qwen-32b, et bien d'autres
+- **API Hugging Face** :
+  Pour accéder aux modèles de plongement (embeddings)
 
 ## 📋 Prérequis
 
@@ -133,6 +135,10 @@ pip install hf_xet
   - Pour plus de détails, consultez la [documentation officielle](https://developers.google.com/youtube/v3/getting-started)
 - Tutoriel vidéo pour les clés API
   - Si vous avez des difficultés pour créer les clés API, voici le tutoriel [Video YouTube](https://www.youtube.com/watch?v=Pzr_bc9OOFw)
+- Une clé API Hugging Face pour accéder aux modèles de plongement (embeddings)
+  - Créez un compte sur [Hugging Face](https://huggingface.co/) pour obtenir votre token
+  - Accédez à votre [profil](https://huggingface.co/settings/tokens) pour générer un token d'accès
+  - Ce token est nécessaire pour télécharger les modèles sentence-transformers
 
 ## 🚀 Installation
 
@@ -194,6 +200,7 @@ Note : Veuillez patienter pendant l'installation des dépendances, cela peut pre
    - Modifiez le fichier `config.ini` ou entrez vos clés directement dans l'application
    - Pour l'API Groq, connectez-vous sur [console.groq.com](https://console.groq.com/home) et générez votre clé API dans la section "API Keys"
    - Pour l'API YouTube, suivez les étapes dans la [console Google Cloud](https://console.cloud.google.com/) pour activer l'API YouTube Data v3 et générer une clé API
+   - Pour l'API Hugging Face, connectez-vous sur [huggingface.co](https://huggingface.co/settings/tokens) et générez un token d'accès dans votre profil
 
 ## 💻 Utilisation
 
@@ -335,3 +342,20 @@ Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou un
 ## 📄 Licence
 
 Ce projet est sous licence [MIT](LICENSE).
+
+### Résolution des problèmes d'authentification Hugging Face
+
+Si vous rencontrez cette erreur :
+
+```
+401 Client Error: Unauthorized for url: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
+```
+
+Assurez-vous d'avoir ajouté votre token Hugging Face dans la section [API_KEYS] du fichier config.ini :
+
+```ini
+[API_KEYS]
+huggingface_token = hf_votre_token_ici
+```
+
+Vous pouvez également l'ajouter directement via l'interface graphique dans le menu Paramètres > Paramètres.
