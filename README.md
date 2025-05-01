@@ -99,6 +99,23 @@ apt-get install python3-tk
 pip install hf_xet
 ```
 
+### Résolution des problèmes d'authentification Hugging Face
+
+Si vous rencontrez cette erreur :
+
+```
+401 Client Error: Unauthorized for url: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
+```
+
+Assurez-vous d'avoir ajouté votre token Hugging Face dans la section [API_KEYS] du fichier config.ini :
+
+```ini
+[API_KEYS]
+huggingface_token = hf_votre_token_ici
+```
+
+Vous pouvez également l'ajouter directement via l'interface graphique dans le menu Paramètres > Paramètres.
+
 ## 🔧 Technologies utilisées
 
 - **Python** :
@@ -342,20 +359,3 @@ Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou un
 ## 📄 Licence
 
 Ce projet est sous licence [MIT](LICENSE).
-
-### Résolution des problèmes d'authentification Hugging Face
-
-Si vous rencontrez cette erreur :
-
-```
-401 Client Error: Unauthorized for url: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/resolve/main/config.json
-```
-
-Assurez-vous d'avoir ajouté votre token Hugging Face dans la section [API_KEYS] du fichier config.ini :
-
-```ini
-[API_KEYS]
-huggingface_token = hf_votre_token_ici
-```
-
-Vous pouvez également l'ajouter directement via l'interface graphique dans le menu Paramètres > Paramètres.
