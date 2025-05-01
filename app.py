@@ -419,8 +419,10 @@ class BlowChatApp:
         # Charger les clés API
         youtube_api_key = self.config.get('API_KEYS', 'youtube_api_key', fallback='')
         groq_api_key = self.config.get('API_KEYS', 'groq_api_key', fallback='')
+        huggingface_token = self.config.get('API_KEYS', 'huggingface_token', fallback='')
         self.interface.youtube_api_key.set(youtube_api_key)
         self.interface.groq_api_key.set(groq_api_key)
+        self.interface.huggingface_token.set(huggingface_token)
         
         # Charger les paramètres de l'assistant
         model_name = self.config.get('Assistant', 'name', fallback='LIHA')
@@ -630,6 +632,7 @@ class BlowChatApp:
             # Sauvegarder les clés API
             self.update_config('API_KEYS', 'youtube_api_key', self.interface.youtube_api_key.get())
             self.update_config('API_KEYS', 'groq_api_key', self.interface.groq_api_key.get())
+            self.update_config('API_KEYS', 'huggingface_token', self.interface.huggingface_token.get())
             
             # Sauvegarder les paramètres de l'assistant
             self.update_config('Assistant', 'name', self.interface.model_name_var.get())
