@@ -116,6 +116,10 @@ huggingface_token = hf_votre_token_ici
 
 Vous pouvez également l'ajouter directement via l'interface graphique dans le menu Paramètres > Paramètres.
 
+## 💎 Release 2.0.1
+
+Vous trouverez la version 2.0.1 [ici](https://github.com/Blowdok/Blow-Chat-YT/releases/tag/v2.0.1)
+
 ## 🔧 Technologies utilisées
 
 - **Python** :
