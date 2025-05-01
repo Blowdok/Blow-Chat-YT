@@ -61,7 +61,7 @@ Blow Chat YT est un assistant conversationnel intelligent basé sur l'IA qui vou
 - **Enrichissement intelligent des bases de données** :
   Évite les doublons en ignorant automatiquement les fichiers déjà présents dans la base
 
-## 💎 Release v2.0
+## 💎v2.0
 
 ![Nouvelle interface principale](screenshot/3.png)
 
