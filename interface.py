@@ -93,7 +93,7 @@ class BlowChatInterface:
         # Appliquer la police à tous les menus Tkinter
         menu_font = tkfont.Font(family="Arial", size=13)
         self.app.option_add("*Menu*Font", menu_font)
-        self.app.title("Blow Chat YT - V 2.0 - By BlowCoder - 2025")
+        self.app.title("Blow Chat YT - V 2.0.1 - BlowCoder - 2025")
         self.app.geometry("1350x800")
         self.app.minsize(1350, 800)
         
