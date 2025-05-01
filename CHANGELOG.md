@@ -22,6 +22,7 @@
 
 - Résolution de l'erreur "401 Client Error: Unauthorized" lors du téléchargement des modèles sentence-transformers (problème signalé par @xerexesx)
 - Amélioration de la gestion des exceptions dans les méthodes liées à l'utilisation des bases de données vectorielles
+- Correction du problème de persistance du token Hugging Face qui s'effaçait à chaque fermeture de l'application
 
 ### Remerciements
 
